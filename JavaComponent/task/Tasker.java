@@ -18,7 +18,7 @@ public class Tasker {
 	private int calculateCost(int[][] costMatrix, int size, boolean[] assigned, int m, int t) {
 		
 		int cost = 0;
-		boolean[] available = new boolean[m];
+		boolean[] available = new boolean[size];
 		Arrays.fill(available, Boolean.TRUE);
 		
 		// For each machine, starting from next machine
