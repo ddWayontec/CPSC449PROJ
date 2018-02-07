@@ -3,82 +3,93 @@ package task;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
-// Using Branch and Bound algorithm to solve Machine assignment problem
+
+/* Tasker class contains optimize() function that utilizes Branch and Bound algorithm
+ * to find the assignment of tasks to machines that has the minimal penalty value.
+ * 
+ * Tasker assumes that the input matrix is a square matrix
+ */
 public class Tasker {
 
-	// Calculates the least promising cost of node
-	// after Machine m is assigned to task t
-	private static int calculatePromisingCost(int[][] costMatrix, Node child) {
+	// Used by optimize() to calculate the lower bound least promising cost of a node
+	private static int calculatePromisingCost(int[][] costMatrix, Node node) {
 		
 		int promisingCost = 0;
 		
-		// Creates an array of available assignments set to TRUE
+		// Creates an array that contains the available assignments 
 		boolean[] availableNodesArray = new boolean[costMatrix.length];
 		Arrays.fill(availableNodesArray, Boolean.TRUE);
 		
-		// For each machine find the task that has the minimal penalty cost
-		for (int i = child.mach + 1; i < costMatrix.length; i++) {
-			int minTaskCost = Integer.MAX_VALUE, minTaskIndex = -1;
+		// Iterates through the remaining unassigned machine
+		// and finds the task that has the minimal penalty cost
+		for (int currMach = node.mach + 1; currMach < costMatrix.length; currMach++) {
 			
-			// For each task
-			for (int j = 0; j < costMatrix.length; j++) {
-				// If task is unassigned
-				if (!child.assignedNodesArray[j] && availableNodesArray[j] && costMatrix[i][j] < minTaskCost) {
-					// Store task ID and cost
-					minTaskIndex = j;
-					minTaskCost = costMatrix[i][j];
+			// Holds the least possible penalty cost for a particular machine
+			int minTaskCost = Integer.MAX_VALUE;
+			// Holds the index of task with least penalty cost
+			int minTaskIndex = -1;
+			
+			// Iterates through the task and gets the task that is unassigned and has the lowest penalty cost
+			for (int currTask = 0; currTask < costMatrix.length; currTask++) {
+				if (!node.assignedNodesArray[currTask] && availableNodesArray[currTask] && costMatrix[currMach][currTask] < minTaskCost) {
+					minTaskIndex = currTask;
+					minTaskCost = costMatrix[currMach][currTask];
 				}
 			}
 			
-			// Add cost of next machine
+			// Adds cost of next machine
 			promisingCost += minTaskCost;
 			
-			// Make optimal task unavailable
+			// Guard for root node
 			if (minTaskIndex != -1)
+				// Sets task with minimal cost unavailable for next iteration
 				availableNodesArray[minTaskIndex] = false;
 		}
 		
 		return promisingCost;
 	}
 	
-	// Finds minimum cost using Branch and Bound algorithm
+
+	
+	// Finds the optimal job scheduling cost using Branch and Bound algorithm 
+	// and implements a list of active nodes as a min-heap
 	public static int optimize(int[][] costMatrix) {
 		
+		// Contains the list of active nodes stored in a min-heap priority queue
 		PriorityQueue<Node> activeNodesArray = new PriorityQueue<Node>();
 		
-		// Initialize heap with a dummy node with dummy values
+		// Initialize root node
 		Node root = new Node(costMatrix);
 		
-		// Adds a dummy node to list of live nodes;
+		// Adds the root node to list of active nodes;
 		activeNodesArray.add(root);
 		
 		while (!activeNodesArray.isEmpty()) {
-			// Find a live node with least estimated cost 
-			// and delete from list of live nodes
+			// Finds the live node with least estimated cost and deletes it from list of live nodes
 			Node activeNode = activeNodesArray.poll();
 			
+			// Goes to next machine 
 			int currMach = activeNode.mach + 1;
 			
-			// If all machine are assigned to a task 
+			// If all machines are assigned to a task 
 			if (currMach == costMatrix.length)
 				return activeNode.promisingCost;
 			
+			// Iterate through the tasks 
 			for (int currTask = 0; currTask < costMatrix.length; currTask++)
 		      {
-		        // If task is unassigned
+		        // Creates a child node for the unassigned task
 		        if (!activeNode.assignedNodesArray[currTask]) {
-		          // Create a new tree node
-		          Node child = new Node(currMach, currTask, activeNode.assignedNodesArray, activeNode);
+		        	Node child = new Node(currMach, currTask, activeNode.assignedNodesArray, activeNode);
 		 
-		          // Cost for ancestor nodes plus current node
-		          child.pathCost = activeNode.pathCost + costMatrix[currMach][currTask];
+		        	// Calculates the path cost of the node
+		        	child.pathCost = activeNode.pathCost + costMatrix[currMach][currTask];
 		 
-		          // Calculate node least promising cost
-		          child.promisingCost = child.pathCost +
-		            calculatePromisingCost(costMatrix, child);
+		          // Calculates the least promising cost of the node
+		        	child.promisingCost = child.pathCost + calculatePromisingCost(costMatrix, child);
 		 
-		          // Add child to list of live nodes;
-		          activeNodesArray.add(child);
+		          // Adds node to list of active nodes;
+		        	activeNodesArray.add(child);
 		          
 		        }
 		  
@@ -87,23 +98,23 @@ public class Tasker {
 		return -1;
 	}
 	
-	// Node class representing space tree
+	// Node class that represents a choice of assignment between a machine and a task
 	private static class Node implements Comparable<Node> {
 		
-		// Stores parent node of current node 
+		// Contains parent node of node 
 		private Node parent;
-		// Contains cost for ancestors node
+		// Contains the past cost of node
 		private int pathCost;
 		// Contains least promising cost
 		private int promisingCost;
-		// Contains worker ID
+		// Contains machine
 		private int mach;
-		// Contains task ID
+		// Contains task
 		private int task;
-		// Contains information about available jobs
+		// Contains information about assignment status of task in a particular choice
 		private boolean[] assignedNodesArray;
 		
-		// Dummy node constructor
+		// Root node constructor
 		public Node(int[][] costMatrix) {
 			
 			this.assignedNodesArray = new boolean[costMatrix.length];
@@ -112,21 +123,21 @@ public class Tasker {
 			this.parent = null;
 		}
 		
-		// Node creation constructor
+		// Node constructor
 		public Node(int machine, int task, boolean[] assigned, Node parent) {
 			
+			// Copies the input assigned array to the node's assigned array
 			this.assignedNodesArray = new boolean[assigned.length];
-			// Copies input assigned array to the node's assigned array
 			for (int i = 0; i < assigned.length; i++)
 				this.assignedNodesArray[i] = assigned[i];
-			
+			// Sets the assignment status of the nodes task to 'assigned'
 			this.assignedNodesArray[task] = true;
 			this.mach = machine;
 			this.task = task;
 			this.parent = parent;
 		}
 		
-		// Comparison method used by pQueue to compare and order nodes in queue
+		// Comparison method used by pQueue to compare and order nodes in the pQueue
 		public int compareTo(Node n) {	
 			if (this.promisingCost < n.promisingCost)
 	            return -1;
