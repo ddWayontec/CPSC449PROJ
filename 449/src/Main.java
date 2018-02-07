@@ -8,7 +8,9 @@ public class Main {
 	
 		String inputFileName = "minimalisticexample.txt";
 		String outputFileName = "";
-		int[][] array = new int[8][8];
+		int[][] penaltyMatrix = new int[8][8];
+		char[] forcedPartialAssignment = new char[8];
+		char[] forbiddenMachine = new char[8];
 		
 		try {
 			inputFileName = args[0];
@@ -20,7 +22,8 @@ public class Main {
 		}
 		
 		PenaltyMatrixRead setup = new PenaltyMatrixRead();
-		setup.openAndParse(array, inputFileName);
+		setup.openAndParse(penaltyMatrix, forcedPartialAssignment, forbiddenMachine,inputFileName);
+		System.out.println("done");
 			
 	}
 }

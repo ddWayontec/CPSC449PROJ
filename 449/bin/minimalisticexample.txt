@@ -2,19 +2,30 @@ Name:
 minimalisticexample
 
 forced partial assignment:
+(1,A)
+(2,B) bb b
+
 
 forbidden machine:
 
 too-near tasks:
 
 machine penalties:
-1 1 1 1 1 1 1 1
-1 1 1 1 1 1 1 1
-1 1 1 1 1 1 1 1
-1 1 1 1 1 1 1 1
-1 1 1 1 1 1 1 1
-1 1 1 1 1 1 1 1
-1 1 1 1 1 1 1 1
+
 1 1 1 1 1 1 1 1
 
-too-near penalities
+1 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 12
+
+too-near penalities:
