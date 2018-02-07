@@ -49,11 +49,24 @@ public class Tasker {
 		return promisingCost;
 	}
 	
+	// Displays solution
+	private static void displayAssignment(int[][] costMatrix, Node activeNode) {
+		System.out.print("\"Solution\"");
+		
+		Node currNode = activeNode;
+		for (int i = 0; i < costMatrix.length; i++) {
+			System.out.print(" " + currNode.task);
+			currNode = currNode.parent;
+		}
+		
+		System.out.print("; \"Quality:\" " + activeNode.promisingCost);
+	}
+	
 
 	
 	// Finds the optimal job scheduling cost using Branch and Bound algorithm 
 	// and implements a list of active nodes as a min-heap
-	public static int optimize(int[][] costMatrix) {
+	public static void optimize(int[][] costMatrix) {
 		
 		// Contains the list of active nodes stored in a min-heap priority queue
 		PriorityQueue<Node> activeNodesArray = new PriorityQueue<Node>();
@@ -71,9 +84,11 @@ public class Tasker {
 			// Goes to next machine 
 			int currMach = activeNode.mach + 1;
 			
-			// If all machines are assigned to a task 
-			if (currMach == costMatrix.length)
-				return activeNode.promisingCost;
+			// If all machines are assigned to a task, prints solution
+			if (currMach == costMatrix.length) {
+				displayAssignment(costMatrix, activeNode);
+				break;
+			}
 			
 			// Iterate through the tasks 
 			for (int currTask = 0; currTask < costMatrix.length; currTask++)
@@ -95,7 +110,6 @@ public class Tasker {
 		  
 		      }
 		}
-		return -1;
 	}
 	
 	// Node class that represents a choice of assignment between a machine and a task
