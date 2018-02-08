@@ -71,6 +71,9 @@ public class FileParser {
 								case 'H':
 									forcedPartialAssignment[machineidx] = 7;
 									break;
+								default:
+									System.out.println("invalid machine/task");
+									System.exit(0);
 								}
 							}
 							else {
@@ -134,6 +137,9 @@ public class FileParser {
 							case 'H':
 								forbiddenMachine[machineidx] = 7;
 								break;
+							default:
+								System.out.println("invalid machine/task");
+								System.exit(0);
 							}
 
 						}
