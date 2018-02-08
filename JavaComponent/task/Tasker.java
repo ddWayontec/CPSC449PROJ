@@ -1,5 +1,7 @@
 package task;
 
+import commons.Config;
+import commons.OutputWriter;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
@@ -25,20 +27,19 @@ public class Tasker {
 		for (int currMach = node.mach + 1; currMach < costMatrix.length; currMach++) {
 			
 			// Holds the least possible penalty cost for a particular machine
-			int minTaskCost = Integer.MAX_VALUE;
+			int minTaskCost = Config.MAX_VALUE;
 			// Holds the index of task with least penalty cost
 			int minTaskIndex = -1;
 			
 			// Iterates through the task and gets the task that is unassigned and has the lowest penalty cost
 			for (int currTask = 0; currTask < costMatrix.length; currTask++) {
-				if (!node.assignedNodesArray[currTask] && availableNodesArray[currTask] && costMatrix[currMach][currTask] < minTaskCost) {
+				if (!node.assignedNodesArray[currTask] && availableNodesArray[currTask] && costMatrix[currMach][currTask] < minTaskCost && costMatrix[currMach][currTask] != -1) {
 					minTaskIndex = currTask;
 					minTaskCost = costMatrix[currMach][currTask];
 				}
 			}
 			
-			// Adds cost of next machine
-			promisingCost += minTaskCost;
+				promisingCost += minTaskCost;
 			
 			// Guard for root node
 			if (minTaskIndex != -1)
@@ -50,16 +51,19 @@ public class Tasker {
 	}
 	
 	// Displays solution
-	private static void displayAssignment(int[][] costMatrix, Node activeNode) {
-		System.out.print("\"Solution\"");
+	private static void displaySolution(int[][] costMatrix, Node activeNode) {
+		
+		int[] solutionArray = new int[costMatrix.length];
 		
 		Node currNode = activeNode;
-		for (int i = 0; i < costMatrix.length; i++) {
-			System.out.print(" " + currNode.task);
+		for (int i = costMatrix.length - 1; i >= 0; i--) {
+			
+			solutionArray[i] = currNode.task;
 			currNode = currNode.parent;
 		}
 		
-		System.out.print("; \"Quality:\" " + activeNode.promisingCost);
+		OutputWriter.writeFile(solutionArray, activeNode.promisingCost);
+		
 	}
 	
 
@@ -80,14 +84,14 @@ public class Tasker {
 		while (!activeNodesArray.isEmpty()) {
 			// Finds the live node with least estimated cost and deletes it from list of live nodes
 			Node activeNode = activeNodesArray.poll();
+			activeNodesArray.clear();
 			
 			// Goes to next machine 
 			int currMach = activeNode.mach + 1;
 			
 			// If all machines are assigned to a task, prints solution
 			if (currMach == costMatrix.length) {
-				displayAssignment(costMatrix, activeNode);
-				break;
+				displaySolution(costMatrix, activeNode);
 			}
 			
 			// Iterate through the tasks 
