@@ -13,6 +13,11 @@ forbidden machine:
 
 too-near tasks:
 
+(A,B)
+
+
+(C,D   )
+
 machine penalties:
 
 1 1 1 1 1 1 1 1

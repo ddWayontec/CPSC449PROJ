@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 //package assignment1;
 
@@ -11,6 +12,7 @@ public class Main {
 		int[][] penaltyMatrix = new int[8][8];
 		int[] forcedPartialAssignment = new int[8];
 		int[] forbiddenMachine = new int[8];
+		ArrayList<String> tooNearTasks = new ArrayList<String>();
 		
 		try {
 			inputFileName = args[0];
@@ -22,7 +24,7 @@ public class Main {
 		}
 		
 		PenaltyMatrixRead setup = new PenaltyMatrixRead();
-		setup.openAndParse(penaltyMatrix, forcedPartialAssignment, forbiddenMachine,inputFileName);
+		setup.openAndParse(penaltyMatrix, forcedPartialAssignment, forbiddenMachine, tooNearTasks, inputFileName);
 		System.out.println("done");
 			
 	}
