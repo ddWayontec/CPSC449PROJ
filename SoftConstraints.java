@@ -24,7 +24,7 @@ public class SoftConstraints{
 		}
 		try {
 			while((line = br.readLine()) != null) {
-				if (line.equals("too-near penalties:")) {
+				if (line.equals("too-near penalities")) {
 					int i = 0;
 					while((line = br.readLine()) != null){
 						line = line.replace("(", "");
