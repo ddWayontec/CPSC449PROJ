@@ -2,7 +2,7 @@ import java.io.*;
 
 public class PenaltyMatrixRead {
 	
-	public void openAndParse(int[][] penaltyMatrix, char[] forcedPartialAssignment, char[] forbiddenMachine,String fileName) {
+	public void openAndParse(int[][] penaltyMatrix, int[] forcedPartialAssignment, int[] forbiddenMachine,String fileName) {
 		
 		String line = null;
 		char[] lineArray;
@@ -28,6 +28,10 @@ public class PenaltyMatrixRead {
             	
             	if (line.equals("forcedpartialassignment:")) {
             		
+            		for (int i = 0; i < 8; i++) {
+            			forcedPartialAssignment[i] = Integer.MAX_VALUE;
+            		}
+            		
             		while (!(line = bufferedReader.readLine().replaceAll("\\s", "")).equals("forbiddenmachine:")) {
             			
                 		if (line.equals("")) {
@@ -35,9 +39,29 @@ public class PenaltyMatrixRead {
                 		}
                 		else {
                 			lineArray = line.toCharArray();
-                			machineidx = Character.getNumericValue(lineArray[1]);
+                			machineidx = Character.getNumericValue(lineArray[1] - 1);
                 			taskLetter = lineArray[3];
-                			forcedPartialAssignment[machineidx] = taskLetter;
+                			switch (taskLetter) {
+                			
+                				case'A':forcedPartialAssignment[machineidx] = 0;
+                						break;
+                				case'B':forcedPartialAssignment[machineidx] = 1;
+                						break;
+                				case'C':forcedPartialAssignment[machineidx] = 2;
+        								break;
+                				case'D':forcedPartialAssignment[machineidx] = 3;
+        								break;
+                				case'E':forcedPartialAssignment[machineidx] = 4;
+        								break;
+                				case'F':forcedPartialAssignment[machineidx] = 5;
+        								break;
+                				case'G':forcedPartialAssignment[machineidx] = 6;
+        								break;
+                				case'H':forcedPartialAssignment[machineidx] = 7;
+        								break;
+                			
+                			}
+                			//forcedPartialAssignment[machineidx] = taskLetter;
                 		}
             		}
             		
@@ -46,6 +70,10 @@ public class PenaltyMatrixRead {
             	
             	if (line.equals("forbiddenmachine:")) {
             		
+            		for (int i = 0; i < 8; i++) {
+            			forbiddenMachine[i] = Integer.MAX_VALUE;
+            		}
+            		
             		while (!(line = bufferedReader.readLine().replaceAll("\\s", "")).equals("too-neartasks:")) {
             			
             			if (line.equals("")) {
@@ -53,9 +81,30 @@ public class PenaltyMatrixRead {
                 		}
                 		else {
                 			lineArray = line.toCharArray();
-                			machineidx = Character.getNumericValue(lineArray[1]);
+                			machineidx = Character.getNumericValue(lineArray[1]) -1 ;
                 			taskLetter = lineArray[3];
-                			forbiddenMachine[machineidx] = taskLetter;
+                			switch (taskLetter) {
+                			
+            				case'A':forbiddenMachine[machineidx] = 0;
+            						break;
+            				case'B':forbiddenMachine[machineidx] = 1;
+            						break;
+            				case'C':forbiddenMachine[machineidx] = 2;
+    								break;
+            				case'D':forbiddenMachine[machineidx] = 3;
+    								break;
+            				case'E':forbiddenMachine[machineidx] = 4;
+    								break;
+            				case'F':forbiddenMachine[machineidx] = 5;
+    								break;
+            				case'G':forbiddenMachine[machineidx] = 6;
+    								break;
+            				case'H':forbiddenMachine[machineidx] = 7;
+    								break;
+            			
+            			}
+
+                		}
             		}
             	}
             	
@@ -106,12 +155,14 @@ public class PenaltyMatrixRead {
             		
             	}
             	
-            	}
-            bufferedReader.close();
+            	
+            
 		}
+            bufferedReader.close();
 		}
 		catch (Exception e) {
 			System.out.println("Error while parsing input file");
+			e.printStackTrace();
 			System.exit(0);
 		}
 		

@@ -9,8 +9,8 @@ public class Main {
 		String inputFileName = "minimalisticexample.txt";
 		String outputFileName = "";
 		int[][] penaltyMatrix = new int[8][8];
-		char[] forcedPartialAssignment = new char[8];
-		char[] forbiddenMachine = new char[8];
+		int[] forcedPartialAssignment = new int[8];
+		int[] forbiddenMachine = new int[8];
 		
 		try {
 			inputFileName = args[0];
