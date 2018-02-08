@@ -1,10 +1,20 @@
+package parse;
+
 import java.io.*;
 import java.util.ArrayList;
 
 public class FileParser {
 
+	private String correctTask(String task) {
+		String[] useToCheck = new String[]{"A", "B", "C", "D", "E", "F", "G", "H"};
+		for (int i= 0; i < useToCheck.length; i++) {
+			if (task.equals(useToCheck[i])) {
+					return "True";
+				} }
+		return "False";
+				}
 	public void openAndParse(int[][] penaltyMatrix, int[] forcedPartialAssignment, int[] forbiddenMachine, ArrayList<String> tooNearTasks,
-			String fileName) {
+			String[] nearlineArray, String [][] wholeNearArray, String fileName) {
 
 		String line = null;
 		char[] lineArray;
@@ -213,8 +223,30 @@ public class FileParser {
 					}
 
 				}
+				while((line = bufferedReader.readLine()) != null) {
+					if (line.equals("too-near penalities")) {
+						int i = 0;
+						while((line = bufferedReader.readLine()) != null){
+							line = line.replace("(", "");
+							line = line.replace(")", "");
+						 	line = line.replaceAll("\\s", "");
+							nearlineArray = line.split(",");
+					
+							if ((correctTask(nearlineArray[0]) != "True") | (correctTask(nearlineArray[1]) != "True")){
+								throw new Exception("Invalid Task");
+								}
+		
+								wholeNearArray[i] = nearlineArray;
+								i++;
+								//System.out.println("here & finished");		
+						}
+						
+						}
+				
 
 			}
+			}
+			
 			bufferedReader.close();
 		} 
 		catch (ArrayIndexOutOfBoundsException exception) {
@@ -222,12 +254,17 @@ public class FileParser {
 			exception.printStackTrace();
 			System.exit(0);
 		}
-		
+		catch (FileNotFoundException e) {
+			System.out.println("System cannot find the specified input file");
+			e.printStackTrace();
+			System.exit(0);
+		}
 		catch (Exception e) {
 			System.out.println("Error while parsing input file");
 			e.printStackTrace();
 			System.exit(0);
 		}
-
 	}
 }
+
+

@@ -1,9 +1,10 @@
 package task;
 
-import commons.Config;
-import commons.OutputWriter;
 import java.util.Arrays;
 import java.util.PriorityQueue;
+
+import commons.Config;
+import commons.OutputWriter;
 
 
 /* Tasker class contains optimize() function that utilizes Branch and Bound algorithm
@@ -14,17 +15,17 @@ import java.util.PriorityQueue;
 public class Tasker {
 
 	// Used by optimize() to calculate the lower bound least promising cost of a node
-	private static int calculatePromisingCost(int[][] costMatrix, Node node) {
+	private static int calculatePromisingCost(int[][] penaltyMatrix, Node node) {
 		
 		int promisingCost = 0;
 		
 		// Creates an array that contains the available assignments 
-		boolean[] availableNodesArray = new boolean[costMatrix.length];
+		boolean[] availableNodesArray = new boolean[penaltyMatrix.length];
 		Arrays.fill(availableNodesArray, Boolean.TRUE);
 		
 		// Iterates through the remaining unassigned machine
 		// and finds the task that has the minimal penalty cost
-		for (int currMach = node.mach + 1; currMach < costMatrix.length; currMach++) {
+		for (int currMach = node.mach + 1; currMach < penaltyMatrix.length; currMach++) {
 			
 			// Holds the least possible penalty cost for a particular machine
 			int minTaskCost = Config.MAX_VALUE;
@@ -32,10 +33,10 @@ public class Tasker {
 			int minTaskIndex = -1;
 			
 			// Iterates through the task and gets the task that is unassigned and has the lowest penalty cost
-			for (int currTask = 0; currTask < costMatrix.length; currTask++) {
-				if (!node.assignedNodesArray[currTask] && availableNodesArray[currTask] && costMatrix[currMach][currTask] < minTaskCost && costMatrix[currMach][currTask] != -1) {
+			for (int currTask = 0; currTask < penaltyMatrix.length; currTask++) {
+				if (!node.assignedNodesArray[currTask] && availableNodesArray[currTask] && penaltyMatrix[currMach][currTask] < minTaskCost && penaltyMatrix[currMach][currTask] != -1) {
 					minTaskIndex = currTask;
-					minTaskCost = costMatrix[currMach][currTask];
+					minTaskCost = penaltyMatrix[currMach][currTask];
 				}
 			}
 			
@@ -82,8 +83,9 @@ public class Tasker {
 		activeNodesArray.add(root);
 		
 		while (!activeNodesArray.isEmpty()) {
-			// Finds the live node with least estimated cost and deletes it from list of live nodes
+			// Finds the live node with least promising cost and deletes it from list of live nodes
 			Node activeNode = activeNodesArray.poll();
+			// Empties live node list when node with least promising code is found
 			activeNodesArray.clear();
 			
 			// Goes to next machine 
