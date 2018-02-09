@@ -89,15 +89,17 @@ public class SoftConstraints{
 					FinalPenaltyValue = FinalPenaltyValue + logicalArray[i][j];}}}
 		return FinalPenaltyValue;
 	}
-	//changes the values A - Z to a string with values 0 - 25
+		//changes the values A - Z to a string with values 0 - 26
 	public int changeStrtoInt(String str) {
 		  char[] chvalue  = str.toCharArray();
 		    for(char c : chvalue)
 		    {
+		    	//gets int value of char from ASCII table
 		        int temp = (int)c;
-		        int temp_integer = 64; 
+		//A = 65,...Z = 90, so check to see if between these values
 		if(temp<=90 & temp>=65)
-		    return ((temp-temp_integer)-1);
+		   //return index value, A = 0,..Z = 25
+			return ((temp-65));
 		    }
 		    return 0;
 	}
