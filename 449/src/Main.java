@@ -12,6 +12,7 @@ public class Main {
 		int[][] penaltyMatrix = new int[8][8];
 		int[] forcedPartialAssignment = new int[8];
 		int[] forbiddenMachine = new int[8];
+		ArrayList<Integer> tooNearPenalties = new ArrayList<Integer>();
 		ArrayList<String> tooNearTasks = new ArrayList<String>();
 		
 		try {
@@ -24,7 +25,7 @@ public class Main {
 		}
 		
 		FileParser setup = new FileParser();
-		setup.openAndParse(penaltyMatrix, forcedPartialAssignment, forbiddenMachine, tooNearTasks, inputFileName);
+		setup.openAndParse(penaltyMatrix, forcedPartialAssignment, forbiddenMachine, tooNearTasks, tooNearPenalties, inputFileName);
 		System.out.println("done");
 			
 	}
