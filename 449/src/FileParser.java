@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class FileParser {
 
 	public void openAndParse(int[][] penaltyMatrix, int[] forcedPartialAssignment, int[] forbiddenMachine,
-			ArrayList<String> tooNearTasks, String fileName) {
+			ArrayList<String> tooNearTasks, ArrayList<Integer> tooNearPenalties, String fileName) {
 
 		String line = null;
 		char[] lineArray;
@@ -16,6 +16,7 @@ public class FileParser {
 		char taskLetter;
 		String tooNear1;
 		String tooNear2;
+		int tooNearLetterVal;
 
 		// attempt to open and parse the penalty matrix of the file
 		try {
@@ -29,17 +30,24 @@ public class FileParser {
 				// replacing all white space on the line with the empty string
 				line = line.replaceAll("\\s", "");
 
+				// if we reach the forced partial assignment hard constraint
 				if (line.equals("forcedpartialassignment:")) {
 
+					// placeholder before filling array
 					for (int i = 0; i < 8; i++) {
 						forcedPartialAssignment[i] = -1;
 					}
-
+					
+					// while we dont reach the next hard constraint, keep reading 
 					while (!(line = bufferedReader.readLine().replaceAll("\\s", "")).equals("forbiddenmachine:")) {
 
+						// if blank line, skip
 						if (line.equals("")) {
 							continue;
-						} else {
+						} 
+						
+						// place index of appropriate letter in array at index of appropriate machine
+						else {
 							lineArray = line.toCharArray();
 							machineidx = Character.getNumericValue(lineArray[1] - 1);
 							taskLetter = lineArray[3];
@@ -70,18 +78,22 @@ public class FileParser {
 								case 'H':
 									forcedPartialAssignment[machineidx] = 7;
 									break;
+								// if letter is not in our range of tasks
 								default:
 									System.out.println("invalid machine/task");
 									System.exit(0);
 								}
-							} else {
+							} 
+							
+							// if a machine already has a task
+							else {
 								System.out.println("partial assignment error");
 								System.exit(0);
 							}
-							// forcedPartialAssignment[machineidx] = taskLetter;
 						}
 					}
 
+					// check to make sure no machines have the same task
 					for (int i = 0; i < forcedPartialAssignment.length - 1; i++) {
 						for (int j = i + 1; j < forcedPartialAssignment.length; j++) {
 							if (forcedPartialAssignment[i] == forcedPartialAssignment[j]
@@ -94,17 +106,24 @@ public class FileParser {
 
 				}
 
+				// if we reach forbidden machine hard constraints
 				if (line.equals("forbiddenmachine:")) {
 
+					// placeholder before we fill array
 					for (int i = 0; i < 8; i++) {
 						forbiddenMachine[i] = -1;
 					}
 
+					// while we dont reach the next set of hard constraints
 					while (!(line = bufferedReader.readLine().replaceAll("\\s", "")).equals("too-neartasks:")) {
 
+						// if blank line, skip
 						if (line.equals("")) {
 							continue;
-						} else {
+						} 
+						
+						// place index of appropriate letter in array at index of appropriate machine
+						else {
 							lineArray = line.toCharArray();
 							machineidx = Character.getNumericValue(lineArray[1]) - 1;
 							taskLetter = lineArray[3];
@@ -143,14 +162,22 @@ public class FileParser {
 					}
 				}
 
+				// if we reach too-near tasks hard constraints
 				if (line.equals("too-neartasks:")) {
 
+					// while we dont reach the penalty matrix
 					while (!(line = bufferedReader.readLine().replaceAll("\\s", "")).equals("machinepenalties:")) {
 
+						// if blank line, skip
 						if (line.equals("")) {
 							continue;
-						} else {
+						} 
+						
+						// concatenate characters into a string and add them to the array
+						else {
 							lineArray = line.toCharArray();
+							
+							// if the ASCII value of the letter is not within A-H, notify user and exit
 							if (lineArray[1] < 65 | lineArray[1] > 72 | lineArray[3] < 65 | lineArray[3] > 72) {
 								System.out.println("invalid machine/task");
 								System.exit(0);
@@ -167,11 +194,12 @@ public class FileParser {
 				// matrix
 				if (line.equals("machinepenalties:")) {
 
-					// row of the 2D array
-					while (machine < 8) {
+					// while we havent reached the last soft constraint
+					while (!(line = bufferedReader.readLine()).equals("too-near penalities")) {
 
-						line = bufferedReader.readLine();
+						line = line.trim();
 
+						// if line is blank, skip
 						if (line.replaceAll("\\s", "").equals("")) {
 							continue;
 						}
@@ -187,30 +215,103 @@ public class FileParser {
 						// column of the 2D array
 						while (penaltyColumn < lineArray.length) {
 
-							// if the character read is a space and we have a
-							// penalty value in the buffer, we can assume
-							// that we have calculated the penalty for the
-							// current task
-							if (lineArray[penaltyColumn] == ' ' & !(penaltyBuffer.isEmpty())) {
-								penaltyMatrix[machine][task] = Integer.parseInt(penaltyBuffer);
-								penaltyBuffer = "";
-								task++;
-							}
-							// if the column read is not empty, concatenate char
-							// to current penalty string
-							else if (lineArray[penaltyColumn] != ' ') {
-								penaltyBuffer += lineArray[penaltyColumn];
+							try {
+								
+								// if the character read is a space and we have a
+								// penalty value in the buffer, we can assume
+								// that we have calculated the penalty for the
+								// current task
+								if (lineArray[penaltyColumn] == ' ' & !(penaltyBuffer.isEmpty())) {
+									if (Integer.parseInt(penaltyBuffer) < 0) {
+										System.out.println("invalid penalty");
+										System.exit(0);
+									}
+									penaltyMatrix[machine][task] = Integer.parseInt(penaltyBuffer);
+									penaltyBuffer = "";
+									task++;
+								} 
+								
+								// if we reach a space and the buffer is empty, continue to next column
+								else if (lineArray[penaltyColumn] != ' ') {
+									penaltyBuffer += lineArray[penaltyColumn];
+								}
+							} catch (Exception e) {
+								System.out.println("machine penalty error");
+								System.exit(0);
 							}
 							penaltyColumn++;
 						}
-						// special case for last number
-						if (penaltyBuffer != "") {
-							penaltyMatrix[machine][task] = Integer.parseInt(penaltyBuffer);
+
+						// if we have less than 8 tasks in a row, notify and exit
+						if (task < 7) {
+							System.out.println("machine penalty error");
+							System.exit(0);
 						}
+						// special case for last number
+						try {
+							if (penaltyBuffer != "") {
+								penaltyMatrix[machine][task] = Integer.parseInt(penaltyBuffer);
+							}
+						} catch (Exception e) {
+							System.out.println("machine penalty error");
+							System.exit(0);
+						}
+
 						machine++;
 
 					}
+					
+					// if we have less than 8 machines, notify and exit
+					if (machine - 1 < 7) {
+						System.out.println("machine penalty error");
+						System.exit(0);
+					}
 
+				}
+				
+				// if we reach the too-near penalties contraints
+				if (line.equals("too-near penalities")) {
+					
+					// while there are still lines to read
+					while ((line = bufferedReader.readLine()) != null) {
+						
+						line = line.replaceAll("\\s", "");
+						
+						// if blank line, skip
+						if (line.equals("")) {
+							continue;
+						} 
+						
+						// place the triples into an arrayList, using index of the tasks instead of letters
+						else {
+							lineArray = line.toCharArray();
+							
+							// if the ASCII value of the letter is not within A-H, notify user and exit
+							if (lineArray[1] < 65 | lineArray[1] > 72 | lineArray[3] < 65 | lineArray[3] > 72) {
+								System.out.println("invalid machine/task");
+								System.exit(0);
+							}
+							tooNearLetterVal = Character.getNumericValue(lineArray[1]) - 10;
+							tooNearPenalties.add(tooNearLetterVal);
+							tooNearLetterVal = Character.getNumericValue(lineArray[3]) - 10;
+							tooNearPenalties.add(tooNearLetterVal);
+							penaltyBuffer = "";
+							
+							// find all characters from the natural number penalty and concatenate into string buffer
+							for (int i = 5; i < lineArray.length - 1; i++) {
+								
+								penaltyBuffer += Character.toString(lineArray[i]);
+							}
+							
+							// if negative penalty val, notify and exit
+							if (Integer.parseInt(penaltyBuffer) < 0) {
+								System.out.println("invalid penalty");
+								System.exit(0);
+							}
+							tooNearPenalties.add(Integer.parseInt(penaltyBuffer));
+						}
+						
+					}
 				}
 
 			}
