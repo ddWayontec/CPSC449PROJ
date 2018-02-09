@@ -23,6 +23,7 @@ too-near tasks:
 
 
 (C,D   )
+(A,B)
 
 machine penalties:
 

@@ -3,12 +3,11 @@ import java.util.ArrayList;
 
 public class FileParser {
 
-	public void openAndParse(int[][] penaltyMatrix, int[] forcedPartialAssignment, int[] forbiddenMachine, ArrayList<String> tooNearTasks,
-			String fileName) {
+	public void openAndParse(int[][] penaltyMatrix, int[] forcedPartialAssignment, int[] forbiddenMachine,
+			ArrayList<String> tooNearTasks, String fileName) {
 
 		String line = null;
 		char[] lineArray;
-		boolean lastElement = false;
 		int penaltyColumn;
 		String penaltyBuffer;
 		int machine = 0;
@@ -46,7 +45,7 @@ public class FileParser {
 							taskLetter = lineArray[3];
 							if (forcedPartialAssignment[machineidx] == -1) {
 								switch (taskLetter) {
-	
+
 								case 'A':
 									forcedPartialAssignment[machineidx] = 0;
 									break;
@@ -75,25 +74,23 @@ public class FileParser {
 									System.out.println("invalid machine/task");
 									System.exit(0);
 								}
-							}
-							else {
+							} else {
 								System.out.println("partial assignment error");
 								System.exit(0);
 							}
 							// forcedPartialAssignment[machineidx] = taskLetter;
 						}
 					}
-					
-					for (int i = 0; i < forcedPartialAssignment.length-1; i++) {
-				        for (int j = i+1; j < forcedPartialAssignment.length; j++) {
-				             if (forcedPartialAssignment[i] == forcedPartialAssignment[j] &
-				            		 forcedPartialAssignment[i] != -1 &
-				            		 forcedPartialAssignment[j] != -1) {
-				            	 System.out.println("partial assignment error");
-				            	 System.exit(0);
-				             }
-				        }
-				    }
+
+					for (int i = 0; i < forcedPartialAssignment.length - 1; i++) {
+						for (int j = i + 1; j < forcedPartialAssignment.length; j++) {
+							if (forcedPartialAssignment[i] == forcedPartialAssignment[j]
+									& forcedPartialAssignment[i] != -1 & forcedPartialAssignment[j] != -1) {
+								System.out.println("partial assignment error");
+								System.exit(0);
+							}
+						}
+					}
 
 				}
 
@@ -112,7 +109,7 @@ public class FileParser {
 							machineidx = Character.getNumericValue(lineArray[1]) - 1;
 							taskLetter = lineArray[3];
 							switch (taskLetter) {
-	
+
 							case 'A':
 								forbiddenMachine[machineidx] = 0;
 								break;
@@ -145,22 +142,24 @@ public class FileParser {
 						}
 					}
 				}
-				
+
 				if (line.equals("too-neartasks:")) {
-					
+
 					while (!(line = bufferedReader.readLine().replaceAll("\\s", "")).equals("machinepenalties:")) {
-						
+
 						if (line.equals("")) {
 							continue;
-						}
-						else {
+						} else {
 							lineArray = line.toCharArray();
+							if (lineArray[1] < 65 | lineArray[1] > 72 | lineArray[3] < 65 | lineArray[3] > 72) {
+								System.out.println("invalid machine/task");
+								System.exit(0);
+							}
 							tooNear1 = Character.toString(lineArray[1]);
 							tooNear2 = Character.toString(lineArray[3]);
 							tooNearTasks.add(tooNear1 + tooNear2);
 						}
-						
-						
+
 					}
 				}
 
@@ -216,13 +215,12 @@ public class FileParser {
 
 			}
 			bufferedReader.close();
-		} 
-		catch (ArrayIndexOutOfBoundsException exception) {
+		} catch (ArrayIndexOutOfBoundsException exception) {
 			System.out.println("invalid machine/task");
 			exception.printStackTrace();
 			System.exit(0);
 		}
-		
+
 		catch (Exception e) {
 			System.out.println("Error while parsing input file");
 			e.printStackTrace();
