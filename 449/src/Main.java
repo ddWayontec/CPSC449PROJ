@@ -23,7 +23,7 @@ public class Main {
 			System.exit(0);
 		}
 		
-		PenaltyMatrixRead setup = new PenaltyMatrixRead();
+		FileParser setup = new FileParser();
 		setup.openAndParse(penaltyMatrix, forcedPartialAssignment, forbiddenMachine, tooNearTasks, inputFileName);
 		System.out.println("done");
 			
