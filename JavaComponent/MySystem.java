@@ -25,7 +25,7 @@ public class MySystem {
 		int[] forcedPartialAssignment = new int[Config.GLOBAL_SIZE];
 		int[] forbiddenMachine = new int[Config.GLOBAL_SIZE];	
 		String[] nearlineArray = new String[3];
-		String[][] wholeNearArray = new String[100][3];
+		ArrayList<String> wholeNearArray = new ArrayList<String>();
 		ArrayList<String> tooNearTasks = new ArrayList<String>();
 		
 		FileParser setup = new FileParser();

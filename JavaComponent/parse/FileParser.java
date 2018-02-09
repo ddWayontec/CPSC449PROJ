@@ -2,6 +2,7 @@ package parse;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FileParser {
 
@@ -14,7 +15,7 @@ public class FileParser {
 		return "False";
 				}
 	public void openAndParse(int[][] penaltyMatrix, int[] forcedPartialAssignment, int[] forbiddenMachine, ArrayList<String> tooNearTasks,
-			String[] nearlineArray, String [][] wholeNearArray, String fileName) {
+			String[] nearlineArray, ArrayList <String> wholeNearArray, String fileName) {
 
 		String line = null;
 		char[] lineArray;
@@ -223,28 +224,27 @@ public class FileParser {
 					}
 
 				}
-				while((line = bufferedReader.readLine()) != null) {
-					if (line.equals("too-near penalities")) {
-						int i = 0;
-						while((line = bufferedReader.readLine()) != null){
-							line = line.replace("(", "");
-							line = line.replace(")", "");
-						 	line = line.replaceAll("\\s", "");
-							nearlineArray = line.split(",");
-					
-							if ((correctTask(nearlineArray[0]) != "True") | (correctTask(nearlineArray[1]) != "True")){
-								throw new Exception("Invalid Task");
-								}
-		
-								wholeNearArray[i] = nearlineArray;
-								i++;
-								//System.out.println("here & finished");		
-						}
-						
-						}
 				
-
-			}
+				if (line.equals("too-near penalities")) {
+					//int i = 0;
+					while((line = bufferedReader.readLine()) != null){
+						line = line.replace("(", "");
+						line = line.replace(")", "");
+					 	line = line.replaceAll("\\s", "");
+						nearlineArray = line.split(",");
+				
+						if ((correctTask(nearlineArray[0]) != "True") | (correctTask(nearlineArray[1]) != "True")){
+							throw new Exception("Invalid Task");
+							}
+	
+							//wholeNearArray.add(nearlineArray);
+						wholeNearArray.addAll(Arrays.asList(nearlineArray));
+							//i++;
+							//System.out.println("here & finished");		
+					}
+					
+					}
+				
 			}
 			
 			bufferedReader.close();

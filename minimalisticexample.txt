@@ -43,3 +43,5 @@ machine penalties:
 1 1 1 1 1 1 1 12
 
 too-near penalities
+(A,B,13)
+(C,F,11)
