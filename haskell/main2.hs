@@ -24,7 +24,7 @@ main = do
   then do (putStrLn "machine penalty error")
   else return()
   
-  if not(isCorrectMachinePen machinePenSection)  || not((map length machinePenSection) == 8)
+  if not(isCorrectMachinePen machinePenSection)  || not((length machinePenSection) == 8)
   then do (putStrLn "machine penalty error")
   else return()
   
