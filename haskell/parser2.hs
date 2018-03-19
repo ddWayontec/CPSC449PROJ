@@ -4,6 +4,7 @@ import Control.Monad
 import System.Environment
 import Data.List
 import Data.String
+import Data.Typeable
 
 removeEndSpace :: String -> String
 removeEndSpace [] = []
@@ -50,17 +51,17 @@ isAllPairs (x:xs)| (((head x) == '(') && ((last x) == ')') && ((countCommas x) =
 isValidPairMT :: [String] -> Bool
 isValidPairMT [] = True
 isValidPairMT (('(':a:',':b:')':[]):xs)| (isValidMachine a && isValidTask b) &&  (isValidPairMT xs) = True
-                                     |otherwise = False
+                                       |otherwise = False
 
 isValidPairTT :: [String] -> Bool
 isValidPairTT [] = True
 isValidPairTT (('(':a:',':b:')':[]):xs)| (isValidTask a && isValidTask b) &&  (isValidPairTT xs) = True
-                                     |otherwise = False
+                                       |otherwise = False
                                      
---isValidPairTTP :: [String] -> Bool
---isValidPairTTP [] = True
---isValidPairTTP (('(':a:',':b:',':c:')':[]):xs)| (isValidTask a && isValidTask b && (isNumber c)) &&  (isValidPairTT xs) = True
---otherwise = False
+isValidTripleTTP :: [String] -> Bool
+isValidTripleTTP [] = True
+isValidTripleTTP (('(':a:',':b:',':c:')':[]):xs)| (isValidTask a && isValidTask b ) &&  (isValidTripleTTP xs) = True
+                                               |otherwise = False
 
 isAllTriples :: [String] -> Bool
 isAllTriples [] = True
@@ -78,23 +79,12 @@ isCorrectMachinePen (x:xs)|(length x) == 15 && (isCorrectMachinePen xs) = True
                           |otherwise = False
                        
 isValidMachine :: Char -> Bool
-isValidMachine a| a == '1' = True
-                | a == '2' = True
-                | a == '3' = True
-                | a == '4' = True
-                | a == '5' = True
-                | a == '6' = True
-                | a == '7' = True
-                | a == '8' = True
-                | otherwise = False
+isValidMachine a| a `elem` ['1'..'8'] = True
+                |otherwise = False
 
 isValidTask :: Char -> Bool
-isValidTask a| a == 'A' = True
-             | a == 'B' = True
-             | a == 'C' = True
-             | a == 'D' = True
-             | a == 'E' = True
-             | a == 'F' = True
-             | a == 'G' = True
-             | a == 'H' = True
-             | otherwise = False
+isValidTask a| a `elem` ['A'..'H'] = True
+             |otherwise = False
+
+charToString :: Char -> String
+charToString c = [c]
