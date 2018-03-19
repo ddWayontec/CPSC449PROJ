@@ -3,7 +3,8 @@ import System.IO
 import Control.Monad
 import System.Environment
 import Parser
-
+import System.Exit (exitSuccess)
+import Data.Typeable
 main = do
 
   args <- getArgs
@@ -20,26 +21,17 @@ main = do
   let machinePenSection = keepFromTo "machine penalties:" "too-near penalities" linesOfContent
   let tooNearPenSection = keepFromTo "too-near penalities" "" linesOfContent
 
-  if (null machinePenSection) 
-  then do (putStrLn "machine penalty error")
-  else return()
-  
-  if not(isCorrectMachinePen machinePenSection)  || not((length machinePenSection) == 8)
-  then do (putStrLn "machine penalty error")
-  else return()
-  
-  if not(isAllPairs forcedSection) 
-  then do (putStrLn "Error forced not in form (machine, task)")
-  else return()
-    
-  if not(isAllPairs forbiddenSection)
-  then do (putStrLn "Error forbidden not in form (machine, task)")
-  else return()
-
-  if not(isAllTriples tooNearPenSection)
-  then do (putStrLn "Error too near penalty not in form (machine, task, penalty)")
-  else return()
-  
-  if not(isValidPairMT forcedSection) || not(isValidPairMT forbiddenSection) || not(isValidPairTT tooNearTaskSection)
-  then do (putStrLn "invalid machine/task")
-  else return()
+  let toOutput = if not((length machinePenSection) == 8) 
+                 then "machine penalty error"
+                 else if not(isAllPairs forcedSection) || not(isAllPairs forbiddenSection) || not(isAllTriples tooNearPenSection)
+                      then "Error in form"
+                      else if not(isValidPairMT forcedSection) || not(isValidPairMT forbiddenSection) || not(isValidPairTT tooNearTaskSection)
+                           then "invalid machine/task"
+                           else if not(isValidPairTT tooNearTaskSection)
+                                then "invalid task"
+                                else if not(isValidTripleTTP tooNearPenSection)
+                                     then "invalid task"
+                                     else  ""
+                                 
+                             
+  writeFile (last args) toOutput
