@@ -54,7 +54,7 @@ isValidPairMT (('(':a:',':b:')':[]):xs)| (isValidMachine a && isValidTask b) && 
                                        |otherwise = False
 
 isValidPairTT :: [String] -> Bool
-isValidPairTT [] = True
+isValidPairTT [] = True 
 isValidPairTT (('(':a:',':b:')':[]):xs)| (isValidTask a && isValidTask b) &&  (isValidPairTT xs) = True
                                        |otherwise = False
                                      
@@ -67,16 +67,11 @@ isAllTriples :: [String] -> Bool
 isAllTriples [] = True
 isAllTriples (x:xs)| (((head x) == '(') && ((last x) == ')') && ((countCommas x) == 2)) && (isAllTriples xs)  = True 
                    |otherwise = False
-                 
+
 countCommas :: String -> Int
 countCommas [] = 0
 countCommas (x:xs)| (x == ',') = 1 + (countCommas xs)
                   |otherwise = 0 + (countCommas xs)
-                  
-isCorrectMachinePen :: [String] -> Bool
-isCorrectMachinePen [] = True                                                                               
-isCorrectMachinePen (x:xs)|(length x) == 15 && (isCorrectMachinePen xs) = True
-                          |otherwise = False
                        
 isValidMachine :: Char -> Bool
 isValidMachine a| a `elem` ['1'..'8'] = True
@@ -86,5 +81,6 @@ isValidTask :: Char -> Bool
 isValidTask a| a `elem` ['A'..'H'] = True
              |otherwise = False
 
-charToString :: Char -> String
-charToString c = [c]
+isInt :: String -> Bool
+isInt x |(read x) `elem` [1..] = True
+           |otherwise = False
